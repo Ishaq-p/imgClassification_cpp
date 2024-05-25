@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+
+# others
+final_project.code-workspace
+
+# training and testing imgs
+Data
