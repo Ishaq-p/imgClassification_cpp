@@ -7,3 +7,6 @@ int poolSize: The second parameter, an integer specifying the pool size. This is
 
 
 https://github.com/PulkitThakar/CNN-from-scratch-using-Numpy/blob/master/CNN.py#L277
+
+
+static_cast<float>(rand() %10)/10

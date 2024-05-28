@@ -119,6 +119,7 @@
     "thread": "cpp",
     "typeinfo": "cpp",
     "__nullptr": "cpp",
-    "filesystem": "cpp"
+    "filesystem": "cpp",
+    "__bit_reference": "cpp"
   }
 }

@@ -44,7 +44,7 @@ Matrix readPgm(const std::string& filename, const int maxVal){
         std::cerr << "Invalid PGM file: " << filename << " - Unable to read image dimensions" << std::endl;
         exit(EXIT_FAILURE);
     }
-    std::cout << rows << cols << std::endl;
+    // std::cout << rows << "x"<< cols << std::endl;
 
     int max_val;
     file >> max_val;                /*next line containing the max pixel value in the file*/
@@ -72,6 +72,21 @@ Matrix readPgm(const std::string& filename, const int maxVal){
 
 float relu(float x){
     return std::max(0.0f, x);
+}
+
+int final_softmax(const std::vector<float> softmax_out){
+    float classifiedClass=0;
+    int class_=0;
+    for(int i=0; i<softmax_out.size(); ++i){
+        if(std::max(softmax_out[i], classifiedClass)==softmax_out[i]){
+            class_=i;
+        }
+        classifiedClass = std::max(softmax_out[i], classifiedClass);
+
+        // std::cout << std::endl << std::max(softmax_out[i], classifiedClass) << std::endl; 
+    }
+    // std::cout << std::endl << softmax_out.size() <<std::endl;
+    return class_;
 }
 
 std::vector<float> softmax(const std::vector<float>&  logits){
@@ -115,9 +130,11 @@ Matrix conLayer(const Matrix& input, const Matrix& kernal){     /* KernalSize(5,
                     sum += paddedInput.data[i + ki][j + kj] * kernal.data[ki][kj];
                 }
             }
+            // std::cout << sum << relu(sum) << ":khelo " << std::endl<<std::endl;
             output.data[i][j] = relu(sum);                        /* ReLU function is applied here*/
         }
     }
+    // std::cout << "khan";
     return output;
 }
 
@@ -148,41 +165,56 @@ float crossEtropyLoss(const std::vector<float>& predicted, int label){
 
 class ConLayer{
 public:
-    int numFilters;
-    int filterSize;
-    std::vector<Matrix> filters;
+    const int inFiltersNum;
+    const int outFiltersNum;
+    const int filterSize;
+    const int cnnLayerNum;
+    std::vector<std::vector<Matrix>> filters;
 
-    ConLayer(int numFilters, int filterSize, int cnn_layerNum, std::vector<Matrix>& weights) : numFilters(numFilters), filterSize(filterSize){
-        filters.resize(numFilters, Matrix(filterSize, filterSize));
-        for(int filNum=0; filNum<numFilters; ++filNum){
-            for(int i=0; i<filterSize; ++i){
-                for(int ii=0; ii<filterSize; ++ii){
+    ConLayer(const int inFiltersNum, const int outFiltersNum, int filterSize, int cnn_layerNum, std::vector<Matrix>& weights) :cnnLayerNum(cnn_layerNum), outFiltersNum(outFiltersNum), inFiltersNum(inFiltersNum), filterSize(filterSize){
+        filters.resize(outFiltersNum, std::vector<Matrix>(inFiltersNum, Matrix(filterSize, filterSize)));
+        // int count=0;
+        for(int outFil=0; outFil<outFiltersNum; ++outFil){
+            for(int inFil=0; inFil<inFiltersNum; ++inFil){
 
-                    if(cnn_layerNum==0){
-                        filters[filNum].data[i][ii] = weights[0].data[filNum][ii + 5*i];
-                    }else{
-                    filters[filNum].data[i][ii] = static_cast<float>(rand() %10)/10;
+                for(int i=0; i<filterSize; ++i){
+                    for(int ii=0; ii<filterSize; ++ii){
+
+                        if(cnn_layerNum==0){
+                            int index= ii + i*filterSize;
+                            if(index==24){
+                                // count++;
+                            }
+                            filters[outFil][inFil].data[i][ii] = weights[0].data[outFil][index];
+                        }else if (cnn_layerNum==1){
+                            int index1= ii + (i*filterSize);
+                            if(index1==24){
+                                // count++;
+                            }
+                            filters[outFil][inFil].data[i][ii] = weights[outFil].data[inFil][index1];
+                            
+                        }
                     }
+                }
+
+            }
+        }
+        // std::cout << count << std::endl;
+
+    }
+
+    std::vector<Matrix> forward(const std::vector<Matrix>& input){
+        std::vector<Matrix> finalOutput(outFiltersNum*inFiltersNum, Matrix(input[0].rows, input[0].cols));
+        for(int img=0; img<input.size(); ++img){
+            for(int i=0; i<outFiltersNum; ++i){
+                for(int ii=0; ii<inFiltersNum; ++ii){
+                    Matrix conLayer_out = conLayer(input[img], filters[i][ii]);   /*ReLU is applied inside this function*/
+                    finalOutput[ii + (i*inFiltersNum)] = maxPooling(conLayer_out, 2);
                 }
             }
         }
-    }
-
-    std::vector<Matrix> forward(const Matrix& input){
-        std::vector<Matrix> finalOutput(numFilters, Matrix(input.rows, input.cols));
-        for (int i=0; i<numFilters; ++i){
-            Matrix conLayer_out = conLayer(input, filters[i]);   /*ReLU is applied inside this function*/
-            finalOutput[i] = maxPooling(conLayer_out, 2);
-        }
         return finalOutput;
     }
-
-    // void storeWeights(std::vector<Matrix>& weights){
-    //     for(size_t i; i<filters.size(); ++i){
-
-    //     }
-
-    // }
 };
 
 
@@ -191,9 +223,13 @@ public:
     Matrix weights;
     std::vector<float> biases;
 
-    FClayer(int inputSize, int outSize, const Matrix& inWeights) : weights(inputSize, outSize), biases(outSize){
+    FClayer(int inputSize, int outSize, const Matrix& inWeights, const Matrix& inBiases) : weights(inputSize, outSize), biases(outSize){
         for(int i=0; i<outSize; ++i){
-            biases[i] = static_cast<float>(rand() %10)/10;                     /*assigning random numbers to the weights of fullyConnected Layer*/
+            if(i>4){
+                biases[i] = inBiases.data[1][i-5];
+            }else{
+                biases[i] = inBiases.data[0][i];
+            }
             for(int ii=0; ii<inputSize; ++ii){
 
                 // !!!!!Note!!!! recheck this
@@ -202,79 +238,126 @@ public:
         }
     }
 
-    std::vector<float> forward(const std::vector<float>& input){
-        std::vector<float> output(biases.size());
-        for(size_t i=0; i<biases.size(); ++i){
-            output[i] = biases[i];
-            for(size_t j=0; j<input.size(); ++j){
-                output[i] += input[j] * weights.data[j][i];
+    std::vector<float> forward(const std::vector<float>& input, std::vector<float>& fc_output){
+            std::cout<< "pass61 "<< biases.size() << std::endl;
+        // std::vector<float> output;
+            std::cout<< "pass62"<<std::endl;
+
+        for(int i=0; i<biases.size(); ++i){
+                std::cout<< "pass63"<<std::endl;
+
+            fc_output[i] = biases[i];
+                std::cout<< "pass63"<<std::endl;
+
+            for(int j=0; j<input.size(); ++j){
+                fc_output[i] += input[j] * weights.data[j][i];
             }
-            output[i] = relu(output[i]);
+            fc_output[i] = relu(fc_output[i]);
         }
-        return output;
+        return fc_output;
     }
 };
 
+void imgFlattener(const std::vector<Matrix>& conImg_final, std::vector<float>& flattenImg){
+    for(int fltrNum=0; fltrNum<512; ++fltrNum){
+        for(int i=0; i<conImg_final[fltrNum].rows; ++i){
+            for(int ii=0; ii<conImg_final[fltrNum].cols; ++ii){
+                
+                int index = ii + i * conImg_final[fltrNum].cols + fltrNum * (conImg_final[0].rows * conImg_final[0].cols);
+                flattenImg[index] = conImg_final[fltrNum].data[i][ii];
+            }
+        }
+    }
+}
+
 
 int main(){
-    const int numFilter1=16;
-    const int numFilter2=32;
+    const int inSize=1;
+    const int outSize1=16;
+    const int outSize2=32;
     const int filterSize=5;
-    srand((unsigned) time(NULL));
-    std::vector<Matrix> cnn1Weight_pack(1, Matrix(16,25));
-    std::vector<Matrix> cnn2Weight_pack(32, Matrix(16,25));
+    std::vector<Matrix>* cnn1Weight_pack = new std::vector<Matrix>(1, Matrix(16,25));
+    std::vector<Matrix>* cnn2Weight_pack = new std::vector<Matrix>(32, Matrix(16,25));
 
     const Matrix cnn1_weight = readPgm("modelWeights/cnn1/cnn1_weights.pmg", 1000000);
-    cnn1Weight_pack[0] = cnn1_weight;
+    (*cnn1Weight_pack)[0] = cnn1_weight;
 
     const Matrix fc1_weight = readPgm("modelWeights/fc1/fc1_weights.pmg", 1000000);
+    const Matrix fc1_bias = readPgm("modelWeights/fc1/fc1_biases.pmg", 1000000);
 
     for(int i=0; i<32; ++i){
         std::string filename = "modelWeights/cnn2/cnn2_weights"+ std::to_string(i) +".pmg";
-        cnn2Weight_pack[i] = readPgm(filename, 1000000);
+        (*cnn2Weight_pack)[i] = readPgm(filename, 1000000);
     }
+    std::cout<< std::endl << "pass1"<<std::endl;
 
 
-    std::string filename = "test.pmg";
+    std::string filename = "2.pmg"; //"Data/finalData/trainData/13212.pmg";
     Matrix img = readPgm(filename, 255);
     std::cout << "Read PGM image of size" << img.rows << "x" << img.cols << std::endl;
 
-    ConLayer convul1 = ConLayer(numFilter1, filterSize, 0, cnn1Weight_pack);
-    std::vector<Matrix> conImg = convul1.forward(img);
+    std::cout<< "pass1.5"<<std::endl;
+    ConLayer convul1 = ConLayer(inSize, outSize1, filterSize, 0, (*cnn1Weight_pack));
+    std::cout<< "pass2"<<std::endl;
 
-    std::vector<Matrix> conImg_final(numFilter1*numFilter2, Matrix(1, 1));
-    ConLayer convul2 = ConLayer(numFilter2, filterSize, 1, cnn2Weight_pack);
-    for(int i=0; i<numFilter1; ++i){
-        std::vector<Matrix> output = convul2.forward(conImg[i]);
-        conImg_final[0+ 2*i] = output[0];
-        conImg_final[1+ 2*i] = output[1];
-        // std::cout << 0+2*i << " " << conImg_final[0+ 2*i].rows << "\t\t" << 1+2*i << " " << conImg_final[1+ 2*i].cols << std::endl ;
-    }
+    std::vector<Matrix>* img1 = new std::vector<Matrix>(1, Matrix(16,16));
+    (*img1) = {img};
+    std::vector<Matrix>* conImg = new std::vector<Matrix>(16, Matrix(8,8));
+    (*conImg) = convul1.forward(*img1);
 
+    std::vector<Matrix>* conImg_final = new std::vector<Matrix>(16*32, Matrix(4,4));
+    ConLayer convul2 = ConLayer(outSize1, outSize2, filterSize, 1, (*cnn2Weight_pack));
+    std::cout<< "pass3"<<std::endl;
 
-    const int fcInput = conImg_final[0].cols * conImg_final[0].rows * numFilter2;
+    (*conImg_final) = convul2.forward(*conImg);
 
-    FClayer fconectd = FClayer(fcInput, 10, fc1_weight);
+    std::cout<< "pass4"<<std::endl;
 
-    std::vector<float> flattenImg(fcInput);
-    for(int fltrNum=0; fltrNum<numFilter2; ++fltrNum){
-        for(int i=0; i<conImg_final[fltrNum].rows; ++i){
-            for(int ii=0; ii<conImg_final[fltrNum].cols; ++ii){
-                int index=i*conImg_final[fltrNum].rows+ii;
-                flattenImg[index] = conImg_final[fltrNum].data[i][ii];
-                // std::cout << std::endl << index + 16*fltrNum << " " << conImg_final[fltrNum].data[i][ii] << " ";
-            }
-        }
-        // std::cout << std::endl;
-        // break;
-    }
+    delete cnn1Weight_pack;
+    delete cnn2Weight_pack;
+    delete conImg;
 
-    std::vector<float> fc_output = fconectd.forward(flattenImg);   
-    std::vector<float> fc_output_soft = softmax(fc_output);
-    std::cout <<  std::endl;
-    for (int i=0; i<10; ++i){
-        std::cout << i << "->" << fc_output_soft[i] << "\t";
-    }
+    const int fcInput = (*conImg_final)[0].cols * (*conImg_final)[0].rows * outSize2;
+    FClayer fconectd = FClayer(fcInput, 10, fc1_weight, fc1_bias);
+
+    std::vector<float>* flattenImg = new std::vector<float>(fcInput);
+        std::cout<< "pass5"<<std::endl;
+    imgFlattener(*conImg_final, *flattenImg);
+
+    delete conImg_final;
+    // for(int fltrNum=0; fltrNum<512; ++fltrNum){
+    //     for(int i=0; i<conImg_final[fltrNum].rows; ++i){
+    //         for(int ii=0; ii<conImg_final[fltrNum].cols; ++ii){
+    //             // int index = ii + i*4 + fltrNum*16;
+    //             int index = ii + i * conImg_final[fltrNum].cols + fltrNum * (conImg_final[0].rows * conImg_final[0].cols);
+    //             flattenImg[index] = conImg_final[fltrNum].data[i][ii];
+    //             //std::cout << index<<" "; //+ 16*fltrNum << " " << conImg_final[fltrNum].data[i][ii] << " ";
+    //         }
+    //     }
+    //     // std::cout << std::endl<< fltrNum <<  std::endl;
+    //     // break;
+    // }
+    std::cout<< "pass6"<<std::endl;
+
+    // for(int i=0; i<flattenImg.size(); ++i){
+    //     std::cout << flattenImg[i]<<" ";
+    // }
+
+    // std::vector<float> fc_output;
+    // fconectd.forward(*flattenImg, fc_output); 
+
+    delete flattenImg;  
+
+        std::cout<< "pass7"<<std::endl;
+
+    // std::vector<float> fc_output_soft = softmax(fc_output);
+    // std::cout <<  std::endl;
+    // for (int i=0; i<10; ++i){
+    //     std::cout << i << "->" << fc_output_soft[i] << "\t";
+    // }
+    // std::cout<< "pass8"<<std::endl;
+
+    // std::cout << std::endl << "the number in the img is: " << final_softmax(fc_output_soft);
 
 
     return 0;
