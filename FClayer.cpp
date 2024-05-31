@@ -1,11 +1,6 @@
 // #include "Matrix.cpp"
-#include <iostream>
-#include <vector>
-#include <cmath>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include<cstdlib>
+// #include <fstream>
+// #include <sstream>
 
 
 // Matrix readPgm(const std::string& filename, const int maxVal){
@@ -51,7 +46,7 @@
 //                 std::cerr << "Invalid PGM file: " << filename << " - Unable to read pixel value" << std::endl;
 //                 exit(EXIT_FAILURE);
 //             }
-//             img.data[i][j] = static_cast<float>(pixel) / max_val;              /*!!!!!!!!!!!!!!!!what does this line do*/
+//             img.data[i][j] = static_cast<double>(pixel) / max_val;              /*!!!!!!!!!!!!!!!!what does this line do*/
 //         }
 //     }
 
@@ -64,7 +59,7 @@
 class FClayer{
 public:
     Matrix weights = Matrix(10,512);
-    std::vector<float> biases = std::vector<float>(10);
+    std::vector<double> biases = std::vector<double>(10);
 
     FClayer(int inputSize, int outSize, const Matrix& inWeights, const Matrix& inBiases) {
         for(int i=0; i<outSize; ++i){
@@ -81,7 +76,7 @@ public:
         }
     }
 
-    std::vector<float> forward(const std::vector<float>& input, std::vector<float>& fc_output){
+    std::vector<double> forward(const std::vector<double>& input, std::vector<double>& fc_output){
         for(int i=0; i<biases.size(); ++i){
             fc_output[i] = biases[i];
             for(int j=0; j<input.size(); ++j){
@@ -93,8 +88,8 @@ public:
         return fc_output;
     }
 
-    float relu(float x){
-        return std::max(0.0f, x);
+    double relu(double x){
+        return std::max(0.0, x);
     }
 
     void printWeights(){

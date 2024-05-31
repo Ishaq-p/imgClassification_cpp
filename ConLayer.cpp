@@ -1,12 +1,7 @@
 // #include "Matrix.cpp"
-
-#include <iostream>
-#include <vector>
 #include <cmath>
-#include <fstream>
-#include <sstream>
-#include <string>
-#include<cstdlib>
+// #include <fstream>
+// #include <sstream>
 
 
 // Matrix readPgm(const std::string& filename, const int maxVal){
@@ -61,8 +56,38 @@
 // }
 
 
-float relu(float x){
-    return std::max(0.0f, x);
+Matrix convolve2d(const Matrix& X, const Matrix& kernel, int stride = 1, int padding = 2) {
+    int kernel_height = kernel.rows;
+    int kernel_width = kernel.cols;
+    int output_height = (X.rows - kernel_height + 2 * padding) / stride + 1;
+    int output_width = (X.cols - kernel_width + 2 * padding) / stride + 1;
+
+    Matrix output(output_height, output_width);
+
+    Matrix X_padded = Matrix(X.rows + 2 * padding, X.cols + 2 * padding);
+    for (int i = 0; i < X.rows; ++i) {
+        for (int j = 0; j < X.cols; ++j) {
+            X_padded.data[i + padding][j + padding] = X.data[i][j];
+        }
+    }
+
+    for (int y = 0; y < output_height; ++y) {
+        for (int x = 0; x < output_width; ++x) {
+            double sum = 0.0f;
+            for (int i = 0; i < kernel_height; ++i) {
+                for (int j = 0; j < kernel_width; ++j) {
+                    sum += X_padded.data[y * stride + i][x * stride + j] * kernel.data[i][j];
+                }
+            }
+            output.data[y][x] = sum;
+        }
+    }
+    return output;
+}
+
+
+double relu(double x){
+    return std::max(0.0, x);
 }
 
 Matrix addPadding(const Matrix& input, const int paddingSize){
@@ -87,7 +112,7 @@ Matrix conLayer(const Matrix& input, const Matrix& kernal){     /* KernalSize(5,
 
     for(int i=0; i<outRows; ++i){
         for(int j=0; j<outCols; ++j){
-            float sum = 0.0f;
+            double sum = 0.0f;
             for(int ki=0; ki<kernal.rows; ++ki){
                 for(int kj=0; kj<kernal.cols; ++kj){
                     sum += paddedInput.data[i + ki][j + kj] * kernal.data[ki][kj];
@@ -106,7 +131,7 @@ Matrix maxPooling(const Matrix& input, int poolSize){    /* KernalSize(2,2),  st
 
     for(int i=0; i<outRows; ++i){
         for(int j=0; j<outCols; ++j){
-            float maxVal = -INFINITY;
+            double maxVal = -INFINITY;
             for(int pi=0; pi<poolSize; ++pi){
                 for(int pj=0; pj<poolSize; ++pj){
                     maxVal = std::max(maxVal, input.data[i * poolSize + pi][j * poolSize + pj]);
@@ -117,7 +142,6 @@ Matrix maxPooling(const Matrix& input, int poolSize){    /* KernalSize(2,2),  st
     }
     return output;
 }
-
 
 class ConLayer {
 public:
@@ -195,6 +219,7 @@ public:
                 for(int i=0;i<filters[k][kk].rows;++i){
                     for(int ii=0;ii<filters[k][kk].cols;++ii){
                         std::cout<< filters[k][kk].data[i][ii] <<" ";//* 1000000 << " ";
+                        std::cout.precision(16);
                     }
                     std::cout<< std::endl;
                 }
@@ -207,10 +232,10 @@ public:
 
 // int main(){
 //     std::vector<Matrix> cnn1Weight_pack = std::vector<Matrix>(3, Matrix(16,25));
-//     const Matrix cnn_bias = readPgm("modelWeights/cnn_1_2_biases.pmg", 1000000);
-//     // const Matrix cnn_bias = readPgm("biases.pmg", 1);
-//     const Matrix cnn1_weight = readPgm("modelWeights/cnn1/cnn1_weights.pmg", 1000000);
-//     // const Matrix cnn1_weight = readPgm("weights.pmg", 1);
+//     // const Matrix cnn_bias = readPgm("modelWeights/cnn_1_2_biases.pmg", 1000000);
+//     const Matrix cnn_bias = readPgm("biases.pmg", 1);
+//     // const Matrix cnn1_weight = readPgm("modelWeights/cnn1/cnn1_weights.pmg", 1000000);
+//     const Matrix cnn1_weight = readPgm("weights.pmg", 1);
 //     cnn1Weight_pack[0] = cnn1_weight;
 
 
@@ -225,15 +250,15 @@ public:
 //     std::vector<Matrix> out = con.forward(img);
 //     // con.printWeights();
 
-//     for(int k=0; k<out.size(); ++k){
+//     // for(int k=0; k<out.size(); ++k){
 //         for(int i=0;i<out[0].rows;++i){
 //             for(int ii=0;ii<out[0].cols;++ii){
-//                 std::cout<< out[k].data[i][ii] << " ";
+//                 std::cout<< out[0].data[i][ii] << " ";
 //             }
 //             std::cout<< std::endl;
 //         }
-//         std::cout<< std::endl;
-//     }
+//     //     std::cout<< std::endl;
+//     // }
 //     std::cout << "hello";
 // }
 
