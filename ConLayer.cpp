@@ -99,10 +99,10 @@ Matrix addPadding(const Matrix& input, const int& paddingSize){
 }
 
 Matrix conLayer(const Matrix& input, const Matrix& kernal){     /* KernalSize(5,5),  stride=1, padding=(2,2)*/
-    // Matrix paddedInput = addPadding(input, 2); // Matrix(input.rows+4, input.cols+4); // Normal
+    Matrix paddedInput = addPadding(input, 2); // Matrix(input.rows+4, input.cols+4); // Normal
     
-    Matrix paddedInput = Matrix(input.rows+4, input.cols+4);                     // Recursive
-    recursPadding(input, paddedInput, 2, paddedInput.cols, paddedInput.cols-1);   // Recursive
+    // Matrix paddedInput = Matrix(input.rows+4, input.cols+4);                     // Recursive
+    // recursPadding(input, paddedInput, 2, paddedInput.cols, paddedInput.cols-1);   // Recursive
 
     int outRows = paddedInput.rows - kernal.rows +1;
     int outCols = paddedInput.cols - kernal.cols +1;
