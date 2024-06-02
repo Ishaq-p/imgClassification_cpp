@@ -18,44 +18,44 @@ Matrix convolve2d(const Matrix& X, const Matrix& kernel, int stride = 1, int pad
 
     Matrix output(output_height, output_width);
 
-    Matrix X_padded = Matrix(X.rows + 2 * padding, X.cols + 2 * padding);
-    for (int i = 0; i < X.rows; ++i) {
-        for (int j = 0; j < X.cols; ++j) {
-            X_padded.data[i + padding][j + padding] = X.data[i][j];
-        }
-    }
+    // Matrix X_padded = Matrix(X.rows + 2 * padding, X.cols + 2 * padding);
+    // for (int i = 0; i < X.rows; ++i) {
+    //     for (int j = 0; j < X.cols; ++j) {
+    //         X_padded.data[i + padding][j + padding] = X.data[i][j];
+    //     }
+    // }
 
-    for (int y = 0; y < output_height; ++y) {
-        for (int x = 0; x < output_width; ++x) {
-            double sum = 0.0f;
-            for (int i = 0; i < kernel_height; ++i) {
-                for (int j = 0; j < kernel_width; ++j) {
-                    sum += X_padded.data[y * stride + i][x * stride + j] * kernel.data[i][j];
-                }
-            }
-            output.data[y][x] = relu(sum);
-        }
-    }
-
-// 219 the accuracy: 0.219
-// real	0m40,377s
-// user	0m40,187s
-// sys	0m0,185s
-    // for(int y = 0; y < output_height; ++y) {
-    //     for(int x = 0; x < output_width; ++x) {
+    // for (int y = 0; y < output_height; ++y) {
+    //     for (int x = 0; x < output_width; ++x) {
     //         double sum = 0.0f;
     //         for (int i = 0; i < kernel_height; ++i) {
     //             for (int j = 0; j < kernel_width; ++j) {
-    //                 int finalY= y * stride + i;
-    //                 int finalX= x * stride + j;
-    //                 if((finalY>=padding & finalY<X.rows+padding) & (finalX>=padding & finalX<X.cols+padding)){
-    //                     sum += X.data[finalY-padding][finalX-padding] * kernel.data[i][j];
-    //                 }
+    //                 sum += X_padded.data[y * stride + i][x * stride + j] * kernel.data[i][j];
     //             }
     //         }
     //         output.data[y][x] = relu(sum);
     //     }
     // }
+
+// 219 the accuracy: 0.219
+// real	0m40,377s
+// user	0m40,187s
+// sys	0m0,185s
+    for(int y = 0; y < output_height; ++y) {
+        for(int x = 0; x < output_width; ++x) {
+            double sum = 0.0f;
+            for (int i = 0; i < kernel_height; ++i) {
+                for (int j = 0; j < kernel_width; ++j) {
+                    int finalY= y * stride + i;
+                    int finalX= x * stride + j;
+                    if((finalY>=padding & finalY<X.rows+padding) & (finalX>=padding & finalX<X.cols+padding)){
+                        sum += X.data[finalY-padding][finalX-padding] * kernel.data[i][j];
+                    }
+                }
+            }
+            output.data[y][x] = relu(sum);
+        }
+    }
     
     return output;
 }
