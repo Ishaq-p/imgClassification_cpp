@@ -10,10 +10,10 @@
 
 ## 26-05-2024
 -> import the weights and filters as PMG
--> perform the first classification                    **
+-> perform the first classification                    
 -> improve the code format
 -> improve the dataStructures                         **
 
 ## 26-05-2024
--> storing the weights for the cnn2 filters     **
--> compare some recursive with for-Loops        **
+-> storing the weights for the cnn2 filters     
+-> compare some recursive with for-Loops        

@@ -9,20 +9,17 @@
 //         std::cerr << "Unable to open file " << filename << std::endl;
 //         exit(EXIT_FAILURE);
 //     }
-
 //     std::string line;
 //     std::getline(file, line);         /*first line of the file*/
 //     if(line!="P2"){
 //         std::cerr << "Invalid PGM file " << filename << " - Magic number is not P2" << std::endl;
 //         exit(EXIT_FAILURE);
 //     }
-
 //     while(std::getline(file, line)){             /*the commented lines of the file*/
 //         if(line[0]!='#'){
 //             break;
 //         }
 //     }
-
 //     std::stringstream ss(line);            /*the line afte the commented lines of the file*/
 //     int cols, rows;
 //     if(!(ss >> rows >> cols)){
@@ -30,14 +27,12 @@
 //         exit(EXIT_FAILURE);
 //     }
 //     // std::cout << rows << "x"<< cols << std::endl;
-
 //     int max_val;
 //     file >> max_val;                /*next line containing the max pixel value in the file*/
 //     if(max_val!=maxVal){
 //         std::cerr << "Invalid PGM file: " << filename << " - Max value is not" << maxVal << std::endl;
 //         exit(EXIT_FAILURE);
 //     }
-
 //     Matrix img(rows, cols);                         /*NOTE:       try recursive here */
 //     for (int i=0; i<rows; ++i){
 //         for (int j=0; j<cols; ++j){
@@ -49,11 +44,9 @@
 //             img.data[i][j] = static_cast<double>(pixel) / max_val;              /*!!!!!!!!!!!!!!!!what does this line do*/
 //         }
 //     }
-
 //     file.close();
 //     return img;
 // }
-
 
 
 class FClayer{
@@ -69,9 +62,7 @@ public:
                 biases[i] = inBiases.data[0][i];
             }
             for(int ii=0; ii<inputSize; ++ii){
-
-                // !!!!!Note!!!! recheck this
-                weights.data[i][ii] = inWeights.data[i][ii];    /*assigning random numbers to the weights of fullyConnected Layer*/
+                weights.data[i][ii] = inWeights.data[i][ii];   
             }
         }
     }
@@ -105,22 +96,16 @@ public:
 // int main(){
 //     const Matrix inBiases = readPgm("fcB.pmg", 1);
 //     const Matrix inWeights = readPgm("fcW.pmg", 1);
-
-
 //     std::vector<float> img = std::vector<float>(512);
 //     std::vector<float> result = std::vector<float>(10);
 //     for(int ii=0;ii<512;++ii){
 //         img[ii] = 1;
 //     }
-
 //     FClayer fc = FClayer(512, 10, inWeights, inBiases);
 //     // fc.printWeights();
 //     fc.forward(img, result);
-
 //     for(int i=0; i<result.size(); ++i){
 //         std::cout << result[i] << " ";
 //     }
-
-
 //     return 0;
 // }

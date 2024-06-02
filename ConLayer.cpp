@@ -1,66 +1,20 @@
 // #include "Matrix.cpp"
 #include <cmath>
-// #include <fstream>
-// #include <sstream>
 
 
-// Matrix readPgm(const std::string& filename, const int maxVal){
-//     std::ifstream file(filename);
-//     if(!file.is_open()){
-//         std::cerr << "Unable to open file " << filename << std::endl;
-//         exit(EXIT_FAILURE);
-//     }
+double relu(double x){
+    return std::max(0.0, x);
+}
 
-//     std::string line;
-//     std::getline(file, line);         /*first line of the file*/
-//     if(line!="P2"){
-//         std::cerr << "Invalid PGM file " << filename << " - Magic number is not P2" << std::endl;
-//         exit(EXIT_FAILURE);
-//     }
-
-//     while(std::getline(file, line)){             /*the commented lines of the file*/
-//         if(line[0]!='#'){
-//             break;
-//         }
-//     }
-
-//     std::stringstream ss(line);            /*the line afte the commented lines of the file*/
-//     int cols, rows;
-//     if(!(ss >> rows >> cols)){
-//         std::cerr << "Invalid PGM file: " << filename << " - Unable to read image dimensions" << std::endl;
-//         exit(EXIT_FAILURE);
-//     }
-//     // std::cout << rows << "x"<< cols << std::endl;
-
-//     int max_val;
-//     file >> max_val;                /*next line containing the max pixel value in the file*/
-//     if(max_val!=maxVal){
-//         std::cerr << "Invalid PGM file: " << filename << " - Max value is not" << maxVal << std::endl;
-//         exit(EXIT_FAILURE);
-//     }
-
-//     Matrix img(rows, cols);                         /*NOTE:       try recursive here */
-//     for (int i=0; i<rows; ++i){
-//         for (int j=0; j<cols; ++j){
-//             int pixel;
-//             if(!(file >> pixel)){
-//                 std::cerr << "Invalid PGM file: " << filename << " - Unable to read pixel value" << std::endl;
-//                 exit(EXIT_FAILURE);
-//             }
-//             img.data[i][j] = static_cast<float>(pixel) / max_val;              /*!!!!!!!!!!!!!!!!what does this line do*/
-//         }
-//     }
-
-//     file.close();
-//     return img;
-// }
-
-
+// 219 the accuracy: 0.219
+// real	0m17,709s
+// user	0m17,529s
+// sys	0m0,177s
 Matrix convolve2d(const Matrix& X, const Matrix& kernel, int stride = 1, int padding = 2) {
     int kernel_height = kernel.rows;
     int kernel_width = kernel.cols;
-    int output_height = (X.rows - kernel_height + 2 * padding) / stride + 1;
-    int output_width = (X.cols - kernel_width + 2 * padding) / stride + 1;
+    int output_height = (X.rows - kernel_height + (2 * padding)) / stride + 1;      // +1 is not added to the stride :.)
+    int output_width = (X.cols - kernel_width + (2 * padding)) / stride + 1;
 
     Matrix output(output_height, output_width);
 
@@ -79,18 +33,58 @@ Matrix convolve2d(const Matrix& X, const Matrix& kernel, int stride = 1, int pad
                     sum += X_padded.data[y * stride + i][x * stride + j] * kernel.data[i][j];
                 }
             }
-            output.data[y][x] = sum;
+            output.data[y][x] = relu(sum);
         }
     }
+
+// 219 the accuracy: 0.219
+// real	0m40,377s
+// user	0m40,187s
+// sys	0m0,185s
+    // for(int y = 0; y < output_height; ++y) {
+    //     for(int x = 0; x < output_width; ++x) {
+    //         double sum = 0.0f;
+    //         for (int i = 0; i < kernel_height; ++i) {
+    //             for (int j = 0; j < kernel_width; ++j) {
+    //                 int finalY= y * stride + i;
+    //                 int finalX= x * stride + j;
+    //                 if((finalY>=padding & finalY<X.rows+padding) & (finalX>=padding & finalX<X.cols+padding)){
+    //                     sum += X.data[finalY-padding][finalX-padding] * kernel.data[i][j];
+    //                 }
+    //             }
+    //         }
+    //         output.data[y][x] = relu(sum);
+    //     }
+    // }
+    
     return output;
 }
 
 
-double relu(double x){
-    return std::max(0.0, x);
+// 219 the accuracy: 0.219
+// real	0m31,993s
+// user	0m31,814s
+// sys	0m0,144s
+void recursPadding(const Matrix& input, Matrix& paddedInput, const int& paddingSize, const int& indexX, const int& indexY){
+    if(indexX>=0 & indexY>=0){
+        if ((indexX>=paddingSize && indexX<input.cols+paddingSize) &
+            (indexY>=paddingSize && indexY<input.cols+paddingSize)){
+
+            paddedInput.data[indexY][indexX] = input.data[indexY-paddingSize][indexX-paddingSize];
+        }else{
+            paddedInput.data[indexY][indexX] = 0;
+        }
+        return recursPadding(input, paddedInput, paddingSize, indexX-1, indexY);
+    }else if(indexY>=0){
+        return recursPadding(input, paddedInput, paddingSize, paddedInput.cols, indexY-1);
+    }
 }
 
-Matrix addPadding(const Matrix& input, const int paddingSize){
+// 219 the accuracy: 0.219
+// real	0m21,239s
+// user	0m21,103s
+// sys	0m0,133s
+Matrix addPadding(const Matrix& input, const int& paddingSize){
     Matrix paddedInput = Matrix(input.rows+paddingSize*2, input.cols+paddingSize*2);
     for(int i=0; i<input.rows+paddingSize*2; ++i){                   /*since we have to apply two extra lines to each side, hence we have to multiply to 2*/
         for(int ii=0; ii<input.cols+paddingSize*2; ++ii){
@@ -105,7 +99,11 @@ Matrix addPadding(const Matrix& input, const int paddingSize){
 }
 
 Matrix conLayer(const Matrix& input, const Matrix& kernal){     /* KernalSize(5,5),  stride=1, padding=(2,2)*/
-    Matrix paddedInput = addPadding(input, 2);
+    // Matrix paddedInput = addPadding(input, 2); // Matrix(input.rows+4, input.cols+4); // Normal
+    
+    Matrix paddedInput = Matrix(input.rows+4, input.cols+4);                     // Recursive
+    recursPadding(input, paddedInput, 2, paddedInput.cols, paddedInput.cols-1);   // Recursive
+
     int outRows = paddedInput.rows - kernal.rows +1;
     int outCols = paddedInput.cols - kernal.cols +1;
     Matrix output(outRows, outCols);
@@ -192,6 +190,7 @@ public:
                 temp.set2zero();
                 for(int ii = 0; ii < inFiltersNum; ++ii) {
                     Matrix conLayer_out = conLayer(input[img], filters[i][ii]); // ReLU applied inside conLayer
+                    // Matrix conLayer_out = convolve2d(input[img], filters[i][ii]); // ReLU applied inside conLayer
 
                     for(int k=0; k<temp.cols; ++k){                          // same as assigning temp += conLayer_out
                         for(int kk=0; kk<temp.cols; ++kk){
@@ -229,38 +228,3 @@ public:
         }
     }
 };
-
-// int main(){
-//     std::vector<Matrix> cnn1Weight_pack = std::vector<Matrix>(3, Matrix(16,25));
-//     // const Matrix cnn_bias = readPgm("modelWeights/cnn_1_2_biases.pmg", 1000000);
-//     const Matrix cnn_bias = readPgm("biases.pmg", 1);
-//     // const Matrix cnn1_weight = readPgm("modelWeights/cnn1/cnn1_weights.pmg", 1000000);
-//     const Matrix cnn1_weight = readPgm("weights.pmg", 1);
-//     cnn1Weight_pack[0] = cnn1_weight;
-
-
-//     std::vector<Matrix> img = std::vector(1, Matrix(16,16));
-//     for(int i=0;i<16;++i){
-//         for(int ii=0;ii<16;++ii){
-//             img[0].data[i][ii] = 1;
-//         }
-//     }
-
-//     ConLayer con = ConLayer(1, 16, 5, 0, cnn1Weight_pack, cnn_bias);
-//     std::vector<Matrix> out = con.forward(img);
-//     // con.printWeights();
-
-//     // for(int k=0; k<out.size(); ++k){
-//         for(int i=0;i<out[0].rows;++i){
-//             for(int ii=0;ii<out[0].cols;++ii){
-//                 std::cout<< out[0].data[i][ii] << " ";
-//             }
-//             std::cout<< std::endl;
-//         }
-//     //     std::cout<< std::endl;
-//     // }
-//     std::cout << "hello";
-// }
-
-
-

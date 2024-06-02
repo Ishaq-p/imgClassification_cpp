@@ -8,7 +8,7 @@ public:
     int rows, cols;
 
     Matrix(int rows, int cols) : rows(rows), cols(cols){
-        data.resize(rows, std::vector<double>(cols, 0.0));    /*!!!!!!!!!!!!!!!!understand this line*/
+        data.resize(rows, std::vector<double>(cols, 0.0));    /*0.0 initialized the values to zero*/
     }
     void set2zero(){
         for(int i=0; i<rows; ++i){
