@@ -177,7 +177,7 @@ public:
     }
 
 
-    std::vector<Matrix> forward(const std::vector<Matrix>& input) {
+    std::vector<Matrix> forward(const std::vector<Matrix>& input, const int outStart, const int outEnd) {
         std::vector<Matrix> finalOutput(outFiltersNum, Matrix(  (input[0].rows - filterSize +1 +4)/2, // +4 is for padding, since we add padding to both start and end hence it will be *2
                                                                 (input[0].cols - filterSize +1 +4)/2));
         
@@ -186,7 +186,8 @@ public:
 
         for(int img = 0; img < input.size(); ++img) {
 
-            for(int i = 0; i < outFiltersNum; ++i) {
+            // for(int i = 0; i < outFiltersNum; ++i) {
+            for(int i = outStart; i < outEnd; ++i) {
                 temp.set2zero();
                 for(int ii = 0; ii < inFiltersNum; ++ii) {
                     // Matrix conLayer_out = conLayer(input[img], filters[i][ii]); // ReLU applied inside conLayer
@@ -199,13 +200,6 @@ public:
                     }
 
                 }
-                // if(cnnLayerNum==1){
-                // for(int k=0; k<temp.cols; ++k){
-                //     for(int kk=0; kk<temp.cols; ++kk){
-                //         temp.data[k][kk] += cnn_bias.data[cnnLayerNum][i]; // Accumulate the results
-                //     }
-                // }
-                // }
                 finalOutput[i] = maxPooling(temp, 2); // Apply max pooling on the accumulated results
             }
         }

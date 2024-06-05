@@ -1,0 +1,117 @@
+To use the `top` command to monitor a running C++ program, you need to follow these steps:
+
+1. **Compile Your C++ Program**: First, compile your C++ program. Make sure to include debug symbols if you want to get detailed information about the program (this is optional but useful for debugging).
+
+    ```bash
+    g++ -g -o my_program my_program.cpp
+    ```
+
+2. **Run Your C++ Program**: Execute your compiled program. 
+
+    ```bash
+    ./my_program
+    ```
+
+3. **Open Another Terminal**: Open a second terminal window. You will use this to run the `top` command.
+
+4. **Identify the Process ID (PID)**: You need to find the PID of your running program. You can do this by using the `ps` command or `pgrep` command, or directly within `top`.
+
+    - Using `ps`:
+
+        ```bash
+        ps aux | grep my_program
+        ```
+
+    - Using `pgrep`:
+
+        ```bash
+        pgrep my_program
+        ```
+
+5. **Run `top` and Filter for Your Program**: In the second terminal, start `top` and filter it to show only the process of your C++ program. You can do this by using the `-p` option followed by the PID of your program.
+
+    ```bash
+    top -p <PID>
+    ```
+
+    Replace `<PID>` with the actual process ID of your program.
+
+### Example
+
+Assuming your program's name is `my_program` and the PID is `12345`, here are the steps:
+
+1. Compile the program:
+
+    ```bash
+    g++ -g -o my_program my_program.cpp
+    ```
+
+2. Run the program:
+
+    ```bash
+    ./my_program
+    ```
+
+3. Open a second terminal and find the PID:
+
+    ```bash
+    pgrep my_program
+    ```
+
+    This might return something like `12345`.
+
+4. Run `top` with the specific PID:
+
+    ```bash
+    top -p 12345
+    ```
+
+### Using `htop` for a More User-Friendly Experience
+
+`htop` is an improved, interactive version of `top`. It provides a more user-friendly and visually appealing interface.
+
+1. **Install `htop`** (if not already installed):
+
+    ```bash
+    sudo apt-get install htop
+    ```
+
+2. **Run `htop`**:
+
+    ```bash
+    htop
+    ```
+
+3. **Filter for Your Program**: Press `F3` to search and type your program's name (e.g., `my_program`). This will highlight your program in the process list.
+
+### Example Usage of `top` with More Details
+
+Here’s a more detailed walkthrough assuming you are using `top`:
+
+1. **Run your C++ program**:
+
+    ```bash
+    ./my_program
+    ```
+
+2. **Open another terminal and find the PID**:
+
+    ```bash
+    pgrep my_program
+    ```
+
+    Assume the PID is `12345`.
+
+3. **Run `top` filtered to your program**:
+
+    ```bash
+    top -p 12345
+    ```
+
+4. **Interact with `top`**:
+    - **Press `h`** to display the help menu, which shows the interactive commands.
+    - **Press `k`** to kill the process (you will be prompted to enter the PID).
+    - **Press `r`** to renice the process (change its priority).
+    - **Press `q`** to quit `top`.
+
+By following these steps, you can effectively monitor the resource usage of your running C++ program using the `top` command (or `htop` for a more user-friendly interface).

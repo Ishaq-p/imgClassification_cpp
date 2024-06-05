@@ -1,0 +1,69 @@
+`perf` is a performance analysis tool available in Linux systems. It provides a wide range of features for profiling the performance of applications and the system as a whole. `perf` can be used to collect and analyze various performance metrics such as CPU usage, memory usage, disk I/O, and more.
+
+### Basic Usage
+
+To use `perf`, you typically need root privileges or be a member of the `perf_event` group. Here are some basic commands:
+
+1. **Record Events**:
+   ```bash
+   sudo perf record <command>
+   ```
+   This command runs `<command>` and collects performance data.
+
+2. **Report Events**:
+   ```bash
+   sudo perf report
+   ```
+   This command generates a report from the recorded data.
+
+3. **Statistical Profiling**:
+   ```bash
+   sudo perf stat <command>
+   ```
+   This command runs `<command>` and collects statistics on various performance metrics.
+
+### Examples
+
+#### CPU Profiling
+
+To profile CPU usage of a command:
+
+```bash
+sudo perf record -e cpu-clock <command>
+```
+
+This records CPU clock events while `<command>` is running.
+
+#### Memory Profiling
+
+To profile memory usage:
+
+```bash
+sudo perf record -e mem:<event> <command>
+```
+
+Replace `<event>` with the specific memory event you want to record, such as `l1d-misses` for L1 data cache misses.
+
+#### Disk I/O Profiling
+
+To profile disk I/O:
+
+```bash
+sudo perf record -e block:block_rq_issue <command>
+```
+
+This records block I/O events while `<command>` is running.
+
+### Analyzing Reports
+
+After recording data with `perf record`, you can analyze it with `perf report`:
+
+```bash
+sudo perf report
+```
+
+This command generates a report based on the collected data, showing various performance metrics and call graphs.
+
+### Conclusion
+
+`perf` is a powerful tool for performance analysis on Linux systems. By recording and analyzing performance data, you can identify performance bottlenecks, optimize code, and improve overall system efficiency. Experiment with different events and options to collect data relevant to your specific performance analysis needs.

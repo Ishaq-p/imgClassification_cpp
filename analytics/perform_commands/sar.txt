@@ -1,0 +1,122 @@
+`sar` (System Activity Report) is a powerful command-line utility for collecting, reporting, and saving system activity information. It is part of the `sysstat` package, which includes tools for performance monitoring on Unix-based systems. `sar` can provide detailed reports on CPU, memory, disk I/O, network, and more.
+
+### Installing `sar`
+
+If `sar` is not already installed, you can install it using your package manager:
+
+- **Debian/Ubuntu**:
+  ```bash
+  sudo apt-get install sysstat
+  ```
+
+- **RHEL/CentOS**:
+  ```bash
+  sudo
+
+```bash
+sudo yum install sysstat
+```
+
+- **Fedora**:
+```bash
+sudo dnf install sysstat
+```
+
+- **Arch Linux**:
+```bash
+sudo pacman -S sysstat
+```
+
+### Using `sar`
+
+#### Basic Usage
+
+To display CPU usage statistics:
+
+```bash
+sar
+```
+
+#### Real-Time Monitoring
+
+To monitor system performance in real-time, specify an interval (in seconds) and the number of times you want the statistics to be updated:
+
+```bash
+sar 2 5
+```
+
+This command updates the statistics every 2 seconds, for a total of 5 updates.
+
+### Understanding the Output
+
+The output of `sar` consists of several columns. Here's what each column represents for CPU statistics:
+
+- `%user`: Percentage of CPU utilization that occurred while executing at the user level (application).
+- `%nice`: Percentage of CPU utilization that occurred while executing at the user level with nice priority.
+- `%system`: Percentage of CPU utilization that occurred while executing at the system level (kernel).
+- `%iowait`: Percentage of time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request.
+- `%steal`: Percentage of time spent in involuntary wait by the virtual CPU or CPUs while the hypervisor was servicing another virtual processor.
+- `%idle`: Percentage of time that the CPU or CPUs were idle and the system did not have an outstanding disk I/O request.
+
+### Example Usage
+
+#### Monitoring CPU Usage
+
+To monitor CPU usage every second for 10 seconds:
+
+```bash
+sar 1 10
+```
+
+#### Monitoring Memory Usage
+
+To monitor memory usage:
+
+```bash
+sar -r 1 10
+```
+
+#### Monitoring I/O Statistics
+
+To monitor I/O statistics:
+
+```bash
+sar -b 1 10
+```
+
+#### Monitoring Network Statistics
+
+To monitor network statistics:
+
+```bash
+sar -n DEV 1 10
+```
+
+### Using `sar` with Historical Data
+
+`sar` can also be used to display historical data. The `sysstat` package typically includes a cron job that collects system activity data periodically and stores it in `/var/log/sa/` (on most Linux distributions).
+
+To display CPU usage statistics from a specific day (e.g., day 1 of the current month):
+
+```bash
+sar -u -f /var/log/sa/sa01
+```
+
+### Using `sar` in Scripts
+
+You can incorporate `sar` into scripts for automated monitoring. For example, a simple script to log CPU usage every minute:
+
+```bash
+#!/bin/bash
+
+while true; do
+    sar -u 1 1 >> /path/to/logfile.log
+    sleep 60
+done
+```
+
+This script appends CPU usage statistics to a log file every minute.
+
+### Conclusion
+
+`sar` is a versatile and powerful tool for monitoring system performance, providing detailed reports on CPU, memory, disk I/O, network, and other system activities. By using `sar`, you can diagnose performance issues, track system behavior over time, and gain valuable insights into the health and performance of your system.

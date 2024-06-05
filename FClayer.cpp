@@ -2,53 +2,6 @@
 // #include <fstream>
 // #include <sstream>
 
-
-// Matrix readPgm(const std::string& filename, const int maxVal){
-//     std::ifstream file(filename);
-//     if(!file.is_open()){
-//         std::cerr << "Unable to open file " << filename << std::endl;
-//         exit(EXIT_FAILURE);
-//     }
-//     std::string line;
-//     std::getline(file, line);         /*first line of the file*/
-//     if(line!="P2"){
-//         std::cerr << "Invalid PGM file " << filename << " - Magic number is not P2" << std::endl;
-//         exit(EXIT_FAILURE);
-//     }
-//     while(std::getline(file, line)){             /*the commented lines of the file*/
-//         if(line[0]!='#'){
-//             break;
-//         }
-//     }
-//     std::stringstream ss(line);            /*the line afte the commented lines of the file*/
-//     int cols, rows;
-//     if(!(ss >> rows >> cols)){
-//         std::cerr << "Invalid PGM file: " << filename << " - Unable to read image dimensions" << std::endl;
-//         exit(EXIT_FAILURE);
-//     }
-//     // std::cout << rows << "x"<< cols << std::endl;
-//     int max_val;
-//     file >> max_val;                /*next line containing the max pixel value in the file*/
-//     if(max_val!=maxVal){
-//         std::cerr << "Invalid PGM file: " << filename << " - Max value is not" << maxVal << std::endl;
-//         exit(EXIT_FAILURE);
-//     }
-//     Matrix img(rows, cols);                         /*NOTE:       try recursive here */
-//     for (int i=0; i<rows; ++i){
-//         for (int j=0; j<cols; ++j){
-//             int pixel;
-//             if(!(file >> pixel)){
-//                 std::cerr << "Invalid PGM file: " << filename << " - Unable to read pixel value" << std::endl;
-//                 exit(EXIT_FAILURE);
-//             }
-//             img.data[i][j] = static_cast<double>(pixel) / max_val;              /*!!!!!!!!!!!!!!!!what does this line do*/
-//         }
-//     }
-//     file.close();
-//     return img;
-// }
-
-
 class FClayer{
 public:
     Matrix weights = Matrix(10,512);

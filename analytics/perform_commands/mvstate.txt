@@ -1,0 +1,106 @@
+`vmstat` (Virtual Memory Statistics) is a command-line utility in Unix-based operating systems that provides information about system processes, memory, paging, block I/O, traps, and CPU activity. It's a useful tool for performance analysis and troubleshooting system performance issues.
+
+### How to Use `vmstat`
+
+#### Basic Usage
+To display the basic statistics, simply run:
+
+```bash
+vmstat
+```
+
+This command shows a snapshot of system performance since the last reboot.
+
+#### Real-Time Monitoring
+To monitor the system in real-time, you can specify the interval (in seconds) at which `vmstat` updates the statistics:
+
+```bash
+vmstat 2
+```
+
+This command updates the statistics every 2 seconds. To specify the number of updates, add the count as the second argument:
+
+```bash
+vmstat 2 5
+```
+
+This command updates the statistics every 2 seconds, for a total of 5 updates.
+
+### Understanding the Output
+
+The output of `vmstat` consists of several columns. Here's what each column represents:
+
+#### Procs
+- `r`: The number of processes waiting for run time.
+- `b`: The number of processes in uninterruptible sleep.
+
+#### Memory
+- `swpd`: The amount of virtual memory used.
+- `free`: The amount of idle memory.
+- `buff`: The amount of memory used as buffers.
+- `cache`: The amount of memory used as cache.
+
+#### Swap
+- `si`: The amount of memory swapped in from disk (per second).
+- `so`: The amount of memory swapped out to disk (per second).
+
+#### IO
+- `bi`: Blocks received from a block device (per second).
+- `bo`: Blocks sent to a block device (per second).
+
+#### System
+- `in`: The number of interrupts per second, including the clock.
+- `cs`: The number of context switches per second.
+
+#### CPU
+- `us`: Time spent running non-kernel code (user time, including nice time).
+- `sy`: Time spent running kernel code (system time).
+- `id`: Time spent idle.
+- `wa`: Time spent waiting for I/O.
+- `st`: Time stolen from a virtual machine.
+
+### Example Usage for Performance Analysis
+
+#### Monitor System for a Specific Time Period
+
+To monitor the system performance every second for 10 seconds, use:
+
+```bash
+vmstat 1 10
+```
+
+#### Analyzing Output
+
+Here's an example output of `vmstat` and how to interpret it:
+
+```plaintext
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 1  0      0 123456  23456 345678    0    0     0     0  150  300 10  5 85  0  0
+```
+
+- **Procs**: If `r` is consistently greater than the number of CPU cores, it indicates CPU contention.
+- **Memory**: Low `free` memory with high `buff` and `cache` is usually fine because Linux aggressively caches. High `swpd` might indicate swapping, which can be problematic if excessive.
+- **Swap**: Non-zero `si` and `so` values indicate swapping activity, which can slow down the system.
+- **IO**: High `bi` and `bo` values indicate heavy disk I/O, which might cause performance bottlenecks.
+- **System**: High `in` and `cs` values can indicate a high rate of interrupts and context switches, which can impact performance.
+- **CPU**: High `us` indicates CPU usage by user processes, `sy` by system processes, `id` is idle time, and `wa` indicates I/O wait time.
+
+### Using `vmstat` in Scripts
+
+`vmstat` can be incorporated into scripts for automated monitoring. For example, a simple script to log `vmstat` output every minute:
+
+```bash
+#!/bin/bash
+
+while true; do
+    vmstat >> /path/to/logfile.log
+    sleep 60
+done
+```
+
+This script appends `vmstat` output to a log file every minute.
+
+### Conclusion
+
+`vmstat` is a powerful and simple tool for monitoring system performance, especially related to CPU, memory, and I/O. By understanding its output, you can diagnose performance issues and understand system behavior in detail.

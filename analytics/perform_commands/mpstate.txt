@@ -1,0 +1,55 @@
+#### Basic Usage
+To display CPU usage statistics:
+
+```bash
+mpstat
+```
+
+#### Per-Processor Statistics
+To display statistics for each individual processor:
+
+```bash
+mpstat -P ALL
+```
+
+This command updates the statistics every 2 seconds.
+
+To specify the number of updates, add the count as the second argument:
+
+```bash
+mpstat 2 5
+```
+
+This command updates the statistics every 2 seconds, for a total of 5 updates.
+
+### Understanding the Output
+
+The output of `mpstat` consists of several columns. Here's what each column represents:
+
+#### CPU
+- `CPU`: The processor number. `all` means the summary of all processors.
+
+#### CPU Time Breakdown
+- `%usr`: Percentage of CPU utilization that occurred while executing at the user level (application).
+- `%nice`: Percentage of CPU utilization that occurred while executing at the user level with nice priority.
+- `%sys`: Percentage of CPU utilization that occurred while executing at the system level (kernel).
+- `%iowait`: Percentage of time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request.
+- `%irq`: Percentage of time spent servicing hardware interrupts.
+- `%soft`: Percentage of time spent servicing software interrupts.
+- `%steal`: Percentage of time spent in involuntary wait by the virtual CPU or CPUs while the hypervisor was servicing another virtual processor.
+- `%guest`: Percentage of time spent by the CPU or CPUs to run a virtual processor.
+- `%gnice`: Percentage of time spent by the CPU running a virtual processor with a nice priority.
+- `%idle`: Percentage of time that the CPU or CPUs were idle and the system did not have an outstanding disk I/O request.
+
+### Example Usage
+
+#### Monitor System for a Specific Time Period
+
+To monitor the system every second for 10 seconds and display per-processor statistics:
+
+```bash
+mpstat -P ALL 1 10
+```
+
+
+`mpstat` is a powerful tool for monitoring CPU usage and understanding the distribution of CPU time across various tasks and processors. By using `mpstat`, you can diagnose performance issues and gain insights into how your system's CPU resources are being utilized.

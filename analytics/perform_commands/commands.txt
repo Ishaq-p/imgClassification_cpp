@@ -1,0 +1,33 @@
+## MONITOR CPU USAGE
+mpstat -P ALL 1 10
+
+## MONITOR VIRTUAL MEMORY 
+vmstat 1 10
+
+## 
+sudo perf record <command>
+sudo perf report
+
+
+
+To monitor CPU usage every second for 10 seconds:
+sar 1 10
+
+#### Monitoring Memory Usage
+sar -r 1 10
+
+#### Monitoring I/O Statistics
+sar -b 1 10
+
+#### Monitoring Network Statistics
+sar -n DEV 1 10
+
+
+top -p 12345
+
+valgrind --leak-check=full \
+         --show-leak-kinds=all \
+         --track-origins=yes \
+         --verbose \
+         --log-file=valgrind-out.txt \
+         ./CNN
