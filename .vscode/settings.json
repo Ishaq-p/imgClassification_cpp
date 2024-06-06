@@ -128,6 +128,15 @@
     "__locale": "cpp",
     "ios": "cpp",
     "__threading_support": "cpp",
-    "__mutex_base": "cpp"
+    "__mutex_base": "cpp",
+    "complex": "cpp",
+    "list": "cpp",
+    "map": "cpp",
+    "set": "cpp",
+    "regex": "cpp",
+    "cfenv": "cpp",
+    "cinttypes": "cpp",
+    "typeindex": "cpp",
+    "variant": "cpp"
   }
 }
