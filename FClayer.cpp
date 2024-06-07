@@ -20,7 +20,7 @@ public:
         }
     }
 
-    std::vector<double> forward(const std::vector<double>& input, std::vector<double>& fc_output){
+    void forward(const std::vector<double>& input, std::vector<double>& fc_output, int start, int end){
         for(int i=0; i<biases.size(); ++i){
             fc_output[i] = biases[i];
             for(int j=0; j<input.size(); ++j){
@@ -29,7 +29,6 @@ public:
             }
             fc_output[i] = relu(fc_output[i]);
         }
-        return fc_output;
     }
 
     double relu(double x){
@@ -45,20 +44,3 @@ public:
         }
     }
 };
-
-// int main(){
-//     const Matrix inBiases = readPgm("fcB.pmg", 1);
-//     const Matrix inWeights = readPgm("fcW.pmg", 1);
-//     std::vector<float> img = std::vector<float>(512);
-//     std::vector<float> result = std::vector<float>(10);
-//     for(int ii=0;ii<512;++ii){
-//         img[ii] = 1;
-//     }
-//     FClayer fc = FClayer(512, 10, inWeights, inBiases);
-//     // fc.printWeights();
-//     fc.forward(img, result);
-//     for(int i=0; i<result.size(); ++i){
-//         std::cout << result[i] << " ";
-//     }
-//     return 0;
-// }

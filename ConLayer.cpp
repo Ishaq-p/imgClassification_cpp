@@ -115,16 +115,15 @@ public:
     }
 
 
-    std::vector<Matrix> forward(const std::vector<Matrix>& input) {
+    std::vector<Matrix> forward(const std::vector<Matrix>& input, int start, int end) {
         std::vector<Matrix> finalOutput(outFiltersNum, Matrix(  (input[0].rows - filterSize +1 +4)/2, // +4 is for padding, since we add padding to both start and end hence it will be *2
                                                                 (input[0].cols - filterSize +1 +4)/2));
         
         Matrix temp((input[0].rows - filterSize +1 +4),
                     (input[0].cols - filterSize +1 +4)); // Temp matrix to accumulate results      
         
-        for(int i = 0; i < outFiltersNum; ++i) {
+        for(int i=start; i<end; ++i) {
             temp.set2zero();
-            // for(int img = 0; img < input.size(); ++img) {
                 for(int ii = 0; ii < inFiltersNum; ++ii) {
                     Matrix conLayer_out = convolve2d(input[ii], filters[i][ii]); // ReLU applied inside conLayer
 
@@ -133,9 +132,7 @@ public:
                             temp.data[k][kk] += conLayer_out.data[k][kk]; // Accumulate the results
                         }
                     }
-
-                // }
-            }
+             }
             finalOutput[i] = maxPooling(temp, 2); // Apply max pooling on the accumulated results
         }
         return finalOutput;
