@@ -60,6 +60,67 @@ Matrix convolve2d(const Matrix& X, const Matrix& kernel, int stride = 1, int pad
     return output;
 }
 
+// 219 the accuracy: 0.219
+// real	0m31,993s
+// user	0m31,814s
+// sys	0m0,144s
+void recursPadding(const Matrix& input, Matrix& paddedInput, const int& paddingSize, const int& indexX, const int& indexY){
+    if(indexX>=0 & indexY>=0){
+        if ((indexX>=paddingSize && indexX<input.cols+paddingSize) &
+            (indexY>=paddingSize && indexY<input.cols+paddingSize)){
+
+            paddedInput.data[indexY][indexX] = input.data[indexY-paddingSize][indexX-paddingSize];
+        }else{
+            paddedInput.data[indexY][indexX] = 0;
+        }
+        return recursPadding(input, paddedInput, paddingSize, indexX-1, indexY);
+    }else if(indexY>=0){
+        return recursPadding(input, paddedInput, paddingSize, paddedInput.cols, indexY-1);
+    }
+}
+
+// 219 the accuracy: 0.219
+// real	0m21,239s
+// user	0m21,103s
+// sys	0m0,133s
+Matrix addPadding(const Matrix& input, const int& paddingSize){
+    Matrix paddedInput = Matrix(input.rows+paddingSize*2, input.cols+paddingSize*2);
+    for(int i=0; i<input.rows+paddingSize*2; ++i){                   /*since we have to apply two extra lines to each side, hence we have to multiply to 2*/
+        for(int ii=0; ii<input.cols+paddingSize*2; ++ii){
+            if((i>=paddingSize && i<input.cols+2) & (ii>=paddingSize && ii<input.cols+2)){
+                paddedInput.data[i][ii] = input.data[i-2][ii-2];
+            }else{
+                paddedInput.data[i][ii] = 0;
+            }
+        }
+    }
+    return paddedInput;
+}
+
+Matrix conLayer(const Matrix& input, const Matrix& kernal){     /* KernalSize(5,5),  stride=1, padding=(2,2)*/
+    Matrix paddedInput = addPadding(input, 2); // Matrix(input.rows+4, input.cols+4); // Normal
+    
+    // Matrix paddedInput = Matrix(input.rows+4, input.cols+4);                     // Recursive
+    // recursPadding(input, paddedInput, 2, paddedInput.cols, paddedInput.cols-1);   // Recursive
+
+    int outRows = paddedInput.rows - kernal.rows +1;
+    int outCols = paddedInput.cols - kernal.cols +1;
+    Matrix output(outRows, outCols);
+
+    for(int i=0; i<outRows; ++i){
+        for(int j=0; j<outCols; ++j){
+            double sum = 0.0f;
+            for(int ki=0; ki<kernal.rows; ++ki){
+                for(int kj=0; kj<kernal.cols; ++kj){
+                    sum += paddedInput.data[i + ki][j + kj] * kernal.data[ki][kj];
+                }
+            }
+            output.data[i][j] = relu(sum);                        /* ReLU function is applied here*/
+        }
+    }
+    return output;
+}
+
 Matrix maxPooling(const Matrix& input, int poolSize){    /* KernalSize(2,2),  stride=2, padding=(0,0)*/
     int outRows = input.rows / poolSize;
     int outCols = input.cols / poolSize;
@@ -126,6 +187,7 @@ public:
             temp.set2zero();
                 for(int ii = 0; ii < inFiltersNum; ++ii) {
                     Matrix conLayer_out = convolve2d(input[ii], filters[i][ii]); // ReLU applied inside conLayer
+                    // Matrix conLayer_out = conLayer(input[ii], filters[i][ii]); // ReLU applied inside conLayer
 
                     for(int k=0; k<temp.cols; ++k){                          // same as assigning temp += conLayer_out
                         for(int kk=0; kk<temp.cols; ++kk){

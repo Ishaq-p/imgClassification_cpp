@@ -90,3 +90,15 @@ In this case:
 
 4. **Explicitly Prevent Optimization**:
    - Use `volatile` or other pragmas to prevent the compiler from optimizing away specific functions.
+
+
+
+**Definitely Lost**: This field indicates the number of bytes that were allocated but are no longer accessible to the program. In other words, memory that was allocated dynamically (with new or malloc), but the program lost all references to it without freeing it, leading to a memory leak.
+
+**Indirectly Lost**: This field indicates the number of bytes that were allocated but are no longer accessible to the program, and there are no direct pointers to them. However, there are still pointers to other memory blocks that might be pointing to these indirectly lost blocks.
+
+**Possibly Lost**: This field indicates memory that was allocated but is no longer accessible to the program, and there are no references to it. However, unlike definitely lost memory, there might still be pointers to it within the program, but Valgrind couldn't find them.
+
+**Still Reachable**: This field indicates memory that was allocated but is still accessible to the program at the end of its execution. This memory could be considered a memory leak if it's memory that should have been deallocated but wasn't. However, it might also be intentional memory that is meant to persist for the entire program's execution.
+
+**Suppressed**: This field indicates any errors or leaks that Valgrind detected but chose to suppress and not report. This can be useful for ignoring known issues or focusing on more critical problems.
