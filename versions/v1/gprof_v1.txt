@@ -1,0 +1,232 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls   s/call   s/call  name    
+ 82.21     51.72    51.72 31680000     0.00     0.00  conLayer(Matrix const&, Matrix const&)
+  7.20     56.25     4.53 31680000     0.00     0.00  addPadding(Matrix const&, int const&)
+  4.98     59.38     3.13    60000     0.00     0.00  mini_main(int)
+  4.50     62.21     2.83 66660046     0.00     0.00  std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<double, std::allocator<double> >*, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > >, unsigned long, std::vector<double, std::allocator<double> > const&)
+  0.87     62.76     0.55                             _init
+  0.21     62.89     0.13    60037     0.00     0.00  readPgm(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long)
+  0.02     62.90     0.01        1     0.01    62.35  process_chunk(std::vector<int, std::allocator<int> > const&, std::vector<Matrix, std::allocator<Matrix> > const&, int, int, int&)
+  0.02     62.91     0.01        1     0.01     0.01  std::vector<Matrix, std::allocator<Matrix> >::vector(unsigned long, Matrix const&, std::allocator<Matrix> const&)
+  0.00     62.91     0.00    60000     0.00     0.00  softmax(std::vector<double, std::allocator<double> > const&, int&)
+  0.00     62.91     0.00        4     0.00     0.00  std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::~vector()
+  0.00     62.91     0.00        2     0.00     0.00  std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<Matrix, std::allocator<Matrix> >*, std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > > >, unsigned long, std::vector<Matrix, std::allocator<Matrix> > const&)
+  0.00     62.91     0.00        2     0.00     0.00  std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > >::~vector()
+  0.00     62.91     0.00        1     0.00     0.00  assignWeights()
+  0.00     62.91     0.00        1     0.00     0.00  Matrix::Matrix(int, int)
+  0.00     62.91     0.00        1     0.00     0.00  std::vector<Matrix, std::allocator<Matrix> >::~vector()
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2022 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 4 byte(s) for 0.02% of 62.91 seconds
+
+index % time    self  children    called     name
+                                                 <spontaneous>
+[1]     99.1    0.00   62.36                 main [1]
+                0.01   62.34       1/1           process_chunk(std::vector<int, std::allocator<int> > const&, std::vector<Matrix, std::allocator<Matrix> > const&, int, int, int&) [2]
+                0.01    0.00       1/1           std::vector<Matrix, std::allocator<Matrix> >::vector(unsigned long, Matrix const&, std::allocator<Matrix> const&) [9]
+                0.00    0.00       1/1           assignWeights() [10]
+                0.00    0.00       1/60037       readPgm(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long) [8]
+                0.00    0.00       1/1           Matrix::Matrix(int, int) [11]
+                0.00    0.00       4/4           std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::~vector() [19]
+                0.00    0.00       2/2           std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > >::~vector() [21]
+                0.00    0.00       1/1           std::vector<Matrix, std::allocator<Matrix> >::~vector() [22]
+-----------------------------------------------
+                0.01   62.34       1/1           main [1]
+[2]     99.1    0.01   62.34       1         process_chunk(std::vector<int, std::allocator<int> > const&, std::vector<Matrix, std::allocator<Matrix> > const&, int, int, int&) [2]
+                3.13   59.21   60000/60000       mini_main(int) [3]
+-----------------------------------------------
+                3.13   59.21   60000/60000       process_chunk(std::vector<int, std::allocator<int> > const&, std::vector<Matrix, std::allocator<Matrix> > const&, int, int, int&) [2]
+[3]     99.1    3.13   59.21   60000         mini_main(int) [3]
+               51.72    7.22 31680000/31680000     conLayer(Matrix const&, Matrix const&) [4]
+                0.14    0.00 3240000/66660046     std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<double, std::allocator<double> >*, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > >, unsigned long, std::vector<double, std::allocator<double> > const&) [6]
+                0.13    0.00   60000/60037       readPgm(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long) [8]
+                0.00    0.00   60000/60000       softmax(std::vector<double, std::allocator<double> > const&, int&) [18]
+-----------------------------------------------
+               51.72    7.22 31680000/31680000     mini_main(int) [3]
+[4]     93.7   51.72    7.22 31680000         conLayer(Matrix const&, Matrix const&) [4]
+                4.53    1.34 31680000/31680000     addPadding(Matrix const&, int const&) [5]
+                1.34    0.00 31680000/66660046     std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<double, std::allocator<double> >*, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > >, unsigned long, std::vector<double, std::allocator<double> > const&) [6]
+-----------------------------------------------
+                4.53    1.34 31680000/31680000     conLayer(Matrix const&, Matrix const&) [4]
+[5]      9.3    4.53    1.34 31680000         addPadding(Matrix const&, int const&) [5]
+                1.34    0.00 31680000/66660046     std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<double, std::allocator<double> >*, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > >, unsigned long, std::vector<double, std::allocator<double> > const&) [6]
+-----------------------------------------------
+                0.00    0.00       1/66660046     Matrix::Matrix(int, int) [11]
+                0.00    0.00       8/66660046     assignWeights() [10]
+                0.00    0.00   60037/66660046     readPgm(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long) [8]
+                0.14    0.00 3240000/66660046     mini_main(int) [3]
+                1.34    0.00 31680000/66660046     addPadding(Matrix const&, int const&) [5]
+                1.34    0.00 31680000/66660046     conLayer(Matrix const&, Matrix const&) [4]
+[6]      4.5    2.83    0.00 66660046         std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<double, std::allocator<double> >*, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > >, unsigned long, std::vector<double, std::allocator<double> > const&) [6]
+-----------------------------------------------
+                                                 <spontaneous>
+[7]      0.9    0.55    0.00                 _init [7]
+-----------------------------------------------
+                0.00    0.00       1/60037       main [1]
+                0.00    0.00      36/60037       assignWeights() [10]
+                0.13    0.00   60000/60037       mini_main(int) [3]
+[8]      0.2    0.13    0.00   60037         readPgm(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long) [8]
+                0.00    0.00   60037/66660046     std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<double, std::allocator<double> >*, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > >, unsigned long, std::vector<double, std::allocator<double> > const&) [6]
+-----------------------------------------------
+                0.01    0.00       1/1           main [1]
+[9]      0.0    0.01    0.00       1         std::vector<Matrix, std::allocator<Matrix> >::vector(unsigned long, Matrix const&, std::allocator<Matrix> const&) [9]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[10]     0.0    0.00    0.00       1         assignWeights() [10]
+                0.00    0.00      36/60037       readPgm(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long) [8]
+                0.00    0.00       8/66660046     std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<double, std::allocator<double> >*, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > >, unsigned long, std::vector<double, std::allocator<double> > const&) [6]
+                0.00    0.00       2/2           std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<Matrix, std::allocator<Matrix> >*, std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > > >, unsigned long, std::vector<Matrix, std::allocator<Matrix> > const&) [20]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[11]     0.0    0.00    0.00       1         Matrix::Matrix(int, int) [11]
+                0.00    0.00       1/66660046     std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<double, std::allocator<double> >*, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > >, unsigned long, std::vector<double, std::allocator<double> > const&) [6]
+-----------------------------------------------
+                0.00    0.00   60000/60000       mini_main(int) [3]
+[18]     0.0    0.00    0.00   60000         softmax(std::vector<double, std::allocator<double> > const&, int&) [18]
+-----------------------------------------------
+                0.00    0.00       4/4           main [1]
+[19]     0.0    0.00    0.00       4         std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::~vector() [19]
+-----------------------------------------------
+                0.00    0.00       2/2           assignWeights() [10]
+[20]     0.0    0.00    0.00       2         std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<Matrix, std::allocator<Matrix> >*, std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > > >, unsigned long, std::vector<Matrix, std::allocator<Matrix> > const&) [20]
+-----------------------------------------------
+                0.00    0.00       2/2           main [1]
+[21]     0.0    0.00    0.00       2         std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > >::~vector() [21]
+-----------------------------------------------
+                0.00    0.00       1/1           main [1]
+[22]     0.0    0.00    0.00       1         std::vector<Matrix, std::allocator<Matrix> >::~vector() [22]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2022 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+   [5] addPadding(Matrix const&, int const&) [4] conLayer(Matrix const&, Matrix const&) [20] std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<Matrix, std::allocator<Matrix> >*, std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > > >, unsigned long, std::vector<Matrix, std::allocator<Matrix> > const&)
+  [10] assignWeights()         [3] mini_main(int)         [21] std::vector<std::vector<Matrix, std::allocator<Matrix> >, std::allocator<std::vector<Matrix, std::allocator<Matrix> > > >::~vector()
+   [2] process_chunk(std::vector<int, std::allocator<int> > const&, std::vector<Matrix, std::allocator<Matrix> > const&, int, int, int&) [11] Matrix::Matrix(int, int) [6] std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::_M_fill_insert(__gnu_cxx::__normal_iterator<std::vector<double, std::allocator<double> >*, std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > > >, unsigned long, std::vector<double, std::allocator<double> > const&)
+   [8] readPgm(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, long) [9] std::vector<Matrix, std::allocator<Matrix> >::vector(unsigned long, Matrix const&, std::allocator<Matrix> const&) [19] std::vector<std::vector<double, std::allocator<double> >, std::allocator<std::vector<double, std::allocator<double> > > >::~vector()
+  [18] softmax(std::vector<double, std::allocator<double> > const&, int&) [22] std::vector<Matrix, std::allocator<Matrix> >::~vector() [7] _init

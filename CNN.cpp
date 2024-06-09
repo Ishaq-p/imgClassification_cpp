@@ -112,9 +112,9 @@ void process_chunk2(const std::vector<double> &input, std::vector<double> &outpu
 }
 
 
-int mini_main(const Matrix& inputImg){// i);
-    // std::string filename = "Data/finalData/trainData/"+std::to_string(i)+".pmg";
-    // Matrix inputImg = readPgm(filename, 10000000000000000L);
+int mini_main(int i){ //const Matrix& inputImg){
+    std::string filename = "Data/finalData/trainData/"+std::to_string(i)+".pmg";
+    Matrix inputImg = readPgm(filename, 10000000000000000L);
 
     std::vector<Matrix> img1 = {inputImg};
 
@@ -176,14 +176,14 @@ void process_chunk(const std::vector<int> &y, const std::vector<Matrix>& inputIm
     int local_corrected = 0; // Local corrected count to avoid frequent locking
     for (int i = start; i < end; ++i) {
         std::string filename = std::to_string(i);
-        int yhat = mini_main(inputImg[i]); // i);
+        int yhat = mini_main(i); // inputImg[i]);
 
         if (yhat == y[i]) {
             ++local_corrected;
         }
     }
     // Update the shared corrected count
-    std::lock_guard<std::mutex> lock(mtx);
+    // std::lock_guard<std::mutex> lock(mtx);
     corrected += local_corrected;
 }
 
@@ -238,32 +238,34 @@ int main(){
     // const std::vector<int> y = {5, 0, 4, 1, 9, 2, 1, 3, 1, 4, 3, 5, 3, 6, 1, 7, 2, 8, 6, 9, 4, 0, 9, 1, 1, 2, 4, 3, 2, 7, 3, 8, 6, 9, 0, 5, 6, 0, 7, 6, 1, 8, 7, 9, 3, 9, 8, 5, 9, 3, 3, 0, 7, 4, 9, 8, 0, 9, 4, 1, 4, 4, 6, 0, 4, 5, 6, 1, 0, 0, 1, 7, 1, 6, 3, 0, 2, 1, 1, 7, 9, 0, 2, 6, 7, 8, 3, 9, 0, 4, 6, 7, 4, 6, 8, 0, 7, 8, 3, 1, 5, 7, 1, 7, 1, 1, 6, 3, 0, 2, 9, 3, 1, 1, 0, 4, 9, 2, 0, 0, 2, 0, 2, 7, 1, 8, 6, 4, 1, 6, 3, 4, 5, 9, 1, 3, 3, 8, 5, 4, 7, 7, 4, 2, 8, 5, 8, 6, 7, 3, 4, 6, 1, 9, 9, 6, 0, 3, 7, 2, 8, 2, 9, 4, 4, 6, 4, 9, 7, 0, 9, 2, 9, 5, 1, 5, 9, 1, 2, 3, 2, 3, 5, 9, 1, 7, 6, 2, 8, 2, 2, 5, 0, 7, 4, 9, 7, 8, 3, 2, 1, 1, 8, 3, 6, 1, 0, 3, 1, 0, 0, 1, 7, 2, 7, 3, 0, 4, 6, 5, 2, 6, 4, 7, 1, 8, 9, 9, 3, 0, 7, 1, 0, 2, 0, 3, 5, 4, 6, 5, 8, 6, 3, 7, 5, 8, 0, 9, 1, 0, 3, 1, 2, 2, 3, 3, 6, 4, 7, 5, 0, 6, 2, 7, 9, 8, 5, 9, 2, 1, 1, 4, 4, 5, 6, 4, 1, 2, 5, 3, 9, 3, 9, 0, 5, 9, 6, 5, 7, 4, 1, 3, 4, 0, 4, 8, 0, 4, 3, 6, 8, 7, 6, 0, 9, 7, 5, 7, 2, 1, 1, 6, 8, 9, 4, 1, 5, 2, 2, 9, 0, 3, 9, 6, 7, 2, 0, 3, 5, 4, 3, 6, 5, 8, 9, 5, 4, 7, 4, 2, 7, 3, 4, 8, 9, 1, 9, 2, 8, 7, 9, 1, 8, 7, 4, 1, 3, 1, 1, 0, 2, 3, 9, 4, 9, 2, 1, 6, 8, 4, 7, 7, 4, 4, 9, 2, 5, 7, 2, 4, 4, 2, 1, 9, 7, 2, 8, 7, 6, 9, 2, 2, 3, 8, 1, 6, 5, 1, 1, 0, 2, 6, 4, 5, 8, 3, 1, 5, 1, 9, 2, 7, 4, 4, 4, 8, 1, 5, 8, 9, 5, 6, 7, 9, 9, 3, 7, 0, 9, 0, 6, 6, 2, 3, 9, 0, 7, 5, 4, 8, 0, 9, 4, 1, 2, 8, 7, 1, 2, 6, 1, 0, 3, 0, 1, 1, 8, 2, 0, 3, 9, 4, 0, 5, 0, 6, 1, 7, 7, 8, 1, 9, 2, 0, 5, 1, 2, 2, 7, 3, 5, 4, 9, 7, 1, 8, 3, 9, 6, 0, 3, 1, 1, 2, 6, 3, 5, 7, 6, 8, 3, 9, 5, 8, 5, 7, 6, 1, 1, 3, 1, 7, 5, 5, 5, 2, 5, 8, 7, 0, 9, 7, 7, 5, 0, 9, 0, 0, 8, 9, 2, 4, 8, 1, 6, 1, 6, 5, 1, 8, 3, 4, 0, 5, 5, 8, 3, 6, 2, 3, 9, 2, 1, 1, 5, 2, 1, 3, 2, 8, 7, 3, 7, 2, 4, 6, 9, 7, 2, 4, 2, 8, 1, 1, 3, 8, 4, 0, 6, 5, 9, 3, 0, 9, 2, 4, 7, 1, 2, 9, 4, 2, 6, 1, 8, 9, 0, 6, 6, 7, 9, 9, 8, 0, 1, 4, 4, 6, 7, 1, 5, 7, 0, 3, 5, 8, 4, 7, 1, 2, 5, 9, 5, 6, 7, 5, 9, 8, 8, 3, 6, 9, 7, 0, 7, 5, 7, 1, 1, 0, 7, 9, 2, 3, 7, 3, 2, 4, 1, 6, 2, 7, 5, 5, 7, 4, 0, 2, 6, 3, 6, 4, 0, 4, 2, 6, 0, 0, 0, 0, 3, 1, 6, 2, 2, 3, 1, 4, 1, 5, 4, 6, 4, 7, 2, 8, 7, 9, 2, 0, 5, 1, 4, 2, 8, 3, 2, 4, 1, 5, 4, 6, 0, 7, 9, 8, 4, 9, 8, 0, 1, 1, 0, 2, 2, 3, 2, 4, 4, 5, 8, 6, 5, 7, 7, 8, 8, 9, 7, 4, 7, 3, 2, 0, 8, 6, 8, 6, 1, 6, 8, 9, 4, 0, 9, 0, 4, 1, 5, 4, 7, 5, 3, 7, 4, 9, 8, 5, 8, 6, 3, 8, 6, 9, 9, 1, 8, 3, 5, 8, 6, 5, 9, 7, 2, 5, 0, 8, 5, 1, 1, 0, 9, 1, 8, 6, 7, 0, 9, 3, 0, 8, 8, 9, 6, 7, 8, 4, 7, 5, 9, 2, 6, 7, 4, 5, 9, 2, 3, 1, 6, 3, 9, 2, 2, 5, 6, 8, 0, 7, 7, 1, 9, 8, 7, 0, 9, 9, 4, 6, 2, 8, 5, 1, 4, 1, 5, 5, 1, 7, 3, 6, 4, 3, 2, 5, 6, 4, 4, 0, 4, 4, 6, 7, 2, 4, 3, 3, 8, 0, 0, 3, 2, 2, 9, 8, 2, 3, 7, 0, 1, 1, 0, 2, 3, 3, 8, 4, 3, 5, 7, 6, 4, 7, 7, 8, 5, 9, 7, 0, 3, 1, 6, 2, 4, 3, 4, 4, 7, 5, 9, 6, 9, 0, 7, 1, 4, 2, 7, 3, 6, 7, 5, 8, 4, 5, 5, 2, 7, 1, 1, 5, 6, 8, 5, 8, 4, 0, 7, 9, 9, 2, 9, 7, 7, 8, 7, 4, 2, 6, 9, 1, 7, 0, 6, 4, 2, 5, 7, 0, 7, 1, 0, 3, 7, 6, 5, 0, 6, 1, 5, 1, 7, 8, 5, 0, 3, 4, 7, 7, 5, 7, 8, 6, 9, 3, 8, 6, 1, 0, 9, 7, 1, 3, 0, 5, 6, 4, 4, 2, 4, 4, 3, 1, 7, 7, 6, 0, 3, 6};
 
     std::vector<Matrix> inputImg = std::vector(y.size(), Matrix(16,16));
-    const int num_threads0 = 8;
-    const int chunk_size0 = y.size() / num_threads0;
-    std::vector<std::thread> threads0;
-    for(int i=0; i<num_threads0; ++i){
-        int start = i * chunk_size0;
-        int end = (i == num_threads0 - 1) ? y.size() : start + chunk_size0;
-        threads0.emplace_back(imgRead, std::ref(inputImg), start, end);  
-    }
-    for (auto &t : threads0) {
-        t.join(); // Wait for all threads to finish
-    } 
+    // const int num_threads0 = 8;
+    // const int chunk_size0 = y.size() / num_threads0;
+    // std::vector<std::thread> threads0;
+    // for(int i=0; i<num_threads0; ++i){
+    //     int start = i * chunk_size0;
+    //     int end = (i == num_threads0 - 1) ? y.size() : start + chunk_size0;
+    //     threads0.emplace_back(imgRead, std::ref(inputImg), start, end);  
+    // }
+    // for (auto &t : threads0) {
+    //     t.join(); // Wait for all threads to finish
+    // } 
 
     int corrected=0;
     double accuracy=0.0;
     const int num_threads = 8;
     const int chunk_size = y.size() / num_threads;
 
-    std::vector<std::thread> threads;
-    for(int i=0; i<num_threads; ++i){
-        int start = i * chunk_size;
-        int end = (i == num_threads - 1) ? y.size() : start + chunk_size;
-        threads.emplace_back(process_chunk, std::ref(y), std::ref(inputImg), start, end, std::ref(corrected));  
-    }
-    for (auto &t : threads) {
-        t.join(); // Wait for all threads to finish
-    } 
+    // std::vector<std::thread> threads;
+    // for(int i=0; i<num_threads; ++i){
+    //     int start = i * chunk_size;
+    //     int end = (i == num_threads - 1) ? y.size() : start + chunk_size;
+    //     threads.emplace_back(process_chunk, std::ref(y), std::ref(inputImg), start, end, std::ref(corrected));  
+    // }
+    // for (auto &t : threads) {
+    //     t.join(); // Wait for all threads to finish
+    // } 
+
+    process_chunk(y, inputImg, 0,y.size(), corrected);
 
     delete convul1;
     delete convul2;
