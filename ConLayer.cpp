@@ -186,8 +186,8 @@ public:
         for(int i=start; i<end; ++i) {
             temp.set2zero();
                 for(int ii = 0; ii < inFiltersNum; ++ii) {
-                    // Matrix conLayer_out = convolve2d(input[ii], filters[i][ii]); // ReLU applied inside conLayer
-                    Matrix conLayer_out = conLayer(input[ii], filters[i][ii]); // ReLU applied inside conLayer
+                    Matrix conLayer_out = convolve2d(input[ii], filters[i][ii]); // ReLU applied inside conLayer
+                    // Matrix conLayer_out = conLayer(input[ii], filters[i][ii]); // ReLU applied inside conLayer
 
                     for(int k=0; k<temp.cols; ++k){                          // same as assigning temp += conLayer_out
                         for(int kk=0; kk<temp.cols; ++kk){
